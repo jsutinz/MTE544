@@ -1,0 +1,60 @@
+name: Mirror new upstream branches
+
+on:
+  schedule:
+    # Check every six hours; scheduled runs can be delayed by GitHub.
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mirror-upstream-branches
+  cancel-in-progress: false
+
+jobs:
+  mirror-new-branches:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out fork
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Add upstream and create missing branches
+        env:
+          UPSTREAM_REPOSITORY: ${{ vars.UPSTREAM_REPOSITORY }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ ! "$UPSTREAM_REPOSITORY" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]]; then
+            echo "Set the repository variable UPSTREAM_REPOSITORY to owner/repo."
+            exit 1
+          fi
+
+          git remote add upstream "https://github.com/${UPSTREAM_REPOSITORY}.git"
+          git fetch --no-tags upstream '+refs/heads/*:refs/remotes/upstream/*'
+
+          created=0
+          while IFS=$'\t' read -r sha ref; do
+            [[ -n "$sha" && "$ref" == refs/heads/* ]] || continue
+
+            # The empty lease requires this branch not to exist on the fork.
+            # It makes creation atomic and will reject any existing branch,
+            # even if that branch could otherwise be fast-forwarded.
+            if git push "--force-with-lease=${ref}:" origin "${sha}:${ref}"; then
+              echo "Created ${ref#refs/heads/} from upstream."
+              created=$((created + 1))
+            else
+              if git ls-remote --exit-code --heads origin "$ref" >/dev/null 2>&1; then
+                echo "Skipped ${ref#refs/heads/}: it already exists in the fork."
+              else
+                echo "Could not create ${ref#refs/heads/}; check token permissions and branch rules."
+                exit 1
+              fi
+            fi
+          done < <(git ls-remote --heads upstream)
+
+          echo "Created $created new branch(es)."
