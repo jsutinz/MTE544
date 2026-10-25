@@ -72,7 +72,7 @@ class decision_maker(Node):
 
         # TODO Part 3: Check if you reached the goal
         if type(self.goal) == list:
-            reached_goal=calculate_linear_error(self.localizer.getPose(),self.goal) < 0.1
+            reached_goal=calculate_linear_error(self.localizer.getPose(),self.goal[-1]) < 0.1
         else:
             reached_goal= calculate_linear_error(self.localizer.getPose(), self.goal) < 0.1
 

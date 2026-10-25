@@ -102,7 +102,7 @@ def calculate_linear_error(current_pose, goal_pose):
 
     # a^2 = b^2 + c^2 including error to determine the distance
 
-    error_linear= sqrt(pow((goal_pose[0] - current_pose[0]), 2), pow((goal_pose[1] - current_pose[1]), 2))
+    error_linear= sqrt(pow((goal_pose[0] - current_pose[0]), 2) + pow((goal_pose[1] - current_pose[1]), 2))
 
     return error_linear
 
