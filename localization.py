@@ -7,7 +7,7 @@ from rclpy.node import Node
 from rclpy.qos import QoSProfile
 from nav_msgs.msg import Odometry as odom
 
-#Additional imports
+#Additional imports -- Same as Lab 1
 from rclpy.qos import ReliabilityPolicy
 from rclpy.qos import HistoryPolicy
 from rclpy.qos import DurabilityPolicy

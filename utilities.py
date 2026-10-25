@@ -87,7 +87,7 @@ class FileReader:
 def euler_from_quaternion(quat):
     x, y, z, w, = quat
 
-    yaw = atan2(2.0*(w*z+x*y), 1.0-2.0*(y*y+z*z))
+    yaw = atan2(2.0*(w*z+x*y), 1.0-2.0*(y*y+z*z)) #from Lab 1
 
     return yaw
 
@@ -100,7 +100,7 @@ def calculate_linear_error(current_pose, goal_pose):
     # Remember that current_pose = [x,y, theta, time stamp] and goal_pose = [x,y]
     # Remember to use the Euclidean distance to calculate the error.
 
-    # a^2 = b^2 + c^2 including error to determine the distance
+    # e^2 = (x_goal - x)^2 + (y_goal - y)^2 including error to determine the distance from the lectures
 
     error_linear= sqrt(pow((goal_pose[0] - current_pose[0]), 2) + pow((goal_pose[1] - current_pose[1]), 2))
 
@@ -114,13 +114,15 @@ def calculate_angular_error(current_pose, goal_pose):
     # Use atan2 to find the desired orientation
     # Remember that this function returns the difference in orientation between where the robot currently faces and where it should face to reach the goal
 
+    # e = arctan[(y_goal - y) + (x_goal - x)] - theta_current
+
     error_angular = atan2(goal_pose[1] - current_pose[1], goal_pose[0] - current_pose[0]) - current_pose[2] #Using the arctan equation from lectures
 
     # Remember to handle the cases where the angular error might exceed the range [-π, π]
 
     if error_angular > M_PI:
-        error_angular = error_angular - (2*M_PI) #Start back from zero
+        error_angular = error_angular - (2*M_PI) #Start back from zero (in range)
     if error_angular < -M_PI:
-        error_angular = error_angular + (2*M_PI) #Start back from zero
+        error_angular = error_angular + (2*M_PI) #Start back from zero (in range)
 
     return error_angular

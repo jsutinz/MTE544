@@ -20,7 +20,10 @@ from controller import controller, trajectoryController
 
 # You may add any other imports you may need/want to use below
 # import ...
-
+#Additional imports (same as Lab 1)
+from rclpy.qos import ReliabilityPolicy
+from rclpy.qos import HistoryPolicy
+from rclpy.qos import DurabilityPolicy
 
 class decision_maker(Node):
 
@@ -89,7 +92,7 @@ class decision_maker(Node):
         velocity, yaw_rate = self.controller.vel_request(self.localizer.getPose(), self.goal, True)
 
         #TODO Part 4: Publish the velocity to move the robot
-        vel_msg.linear.x = velocity
+        vel_msg.linear.x = velocity #Same as Lab 1
         vel_msg.angular.z = yaw_rate
         self.publisher.publish(vel_msg)
 
@@ -103,11 +106,25 @@ def main(args=None):
     # TODO Part 3: You migh need to change the QoS profile based on whether you're using the real robot or in simulation.
     # Remember to define your QoS profile based on the information available in "ros2 topic info /odom --verbose" as explained in Tutorial 3
 
-    odom_qos=QoSProfile(reliability=2, durability=2, history=1, depth=10)
+    # odom_qos=QoSProfile(reliability=2, durability=2, history=1, depth=10)
+
+    odom_qos= QoSProfile(reliability=ReliabilityPolicy.BEST_EFFORT, durability=DurabilityPolicy.VOLATILE, history=HistoryPolicy.KEEP_LAST, depth=5)
+
 
 
     # TODO Part 4: instantiate the decision_maker with the proper parameters for moving the robot
     if args.motion.lower() == "point":
+
+        # Note:
+        # class decision_maker(
+        #     publisher_msg: type[Twist],
+        #     publishing_topic: str,
+        #     qos_publisher: int,
+        #     goalPoint: list[float],
+        #     rate: int = 10,
+        #     motion_type: int = POINT_PLANNER
+        #     )
+
         DM=decision_maker(Twist, "/cmd_vel", 10, [1.0, 1.0], 10, POINT_PLANNER)
     elif args.motion.lower() == "trajectory":
         DM=decision_maker(Twist, "/cmd_vel", 10, None, 10, TRAJECTORY_PLANNER)

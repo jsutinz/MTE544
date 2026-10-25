@@ -29,12 +29,12 @@ class planner:
         # the return should be a list of trajectory points: [ [x1,y1], ..., [xn,yn]]
 
         # parabola 
-        x = np.linspace(0, 1.5, 15)
-        y = x ** 2
+        # x = np.linspace(0, 1.5, 15)
+        # y = x ** 2
 
         # sigmoid function
-        # x = np.linspace(0, 2.5, 25)
-        # y = 2 / (1 + np.exp(-2 * x)) - 1
+        x = np.linspace(0, 2.5, 25)
+        y = 2 / (1 + np.exp(-2 * x)) - 1
 
         return [[x_val, y_val] for x_val, y_val in zip(x, y)]
 
