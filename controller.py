@@ -5,8 +5,11 @@ from pid import PID_ctrl
 from utilities import euler_from_quaternion, calculate_angular_error, calculate_linear_error
 
 M_PI=3.1415926535
-MAX_LINEAR_VELOCITY = 0.22 #m/s -- for turtlebot4, this is 0.31
-MAX_ANGULAR_VELOCITY = 2.84 #rad/s -- for turtlebot4, this is 1.90
+# MAX_LINEAR_VELOCITY = 0.22 #m/s -- for turtlebot4, this is 0.31
+# MAX_ANGULAR_VELOCITY = 2.84 #rad/s -- for turtlebot4, this is 1.90
+
+MAX_LINEAR_VELOCITY = 0.31 #m/s -- for turtlebot4, this is 0.31
+MAX_ANGULAR_VELOCITY = 1.90 #rad/s -- for turtlebot4, this is 1.90
 
 P=0; PD=1; PI=2; PID=3
 
@@ -14,11 +17,16 @@ class controller:
 
 
     # Default gains of the controller for linear and angular motions
-    def __init__(self, klp=0.2, klv=0.2, kli=0.2, kap=0.2, kav=0.2, kai=0.2):
+    def __init__(self, klp=0.2, klv=0.2, kli=0.2, kap=2.0, kav=0.2, kai=0.2):
 
         # TODO Part 5 and 6: Modify the below lines to test your PD, PI, and PID controller
         self.PID_linear=PID_ctrl(PID, klp, klv, kli, filename_="linear.csv")
         self.PID_angular=PID_ctrl(PID, kap, kav, kai, filename_="angular.csv")
+
+        # P1 Test1: klp=0.2, klv=0.2, kli=0.2, kap=0.2, kav=0.2, kai=0.2
+        # P1 test2: klp=0.2, klv=0.2, kli=0.2, kap=0.5, kav=0.2, kai=0.2
+        # P1 test3: klp=0.2, klv=0.2, kli=0.2, kap=2.0, kav=0.2, kai=0.2
+
 
 
     def vel_request(self, pose, goal, status):
