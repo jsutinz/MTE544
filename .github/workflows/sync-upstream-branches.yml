@@ -2,8 +2,8 @@ name: Mirror new upstream branches
 
 on:
   schedule:
-    # Check every six hours; scheduled runs can be delayed by GitHub.
-    - cron: "17 */6 * * *"
+    # Check every 24 hours; scheduled runs can be delayed by GitHub.
+    - cron: "17 0 * * *"
   workflow_dispatch:
 
 permissions:
